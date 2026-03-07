@@ -10,7 +10,8 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import med.voll.api.domain.address.dto.AddressData;
+import med.voll.api.domain.address.Address;
+import med.voll.api.domain.doctor.dto.DoctorRegistrationData;
 
 /**
  * JPA entity representing a Doctor.
@@ -58,5 +59,16 @@ public class Doctor {
     @NotNull
     @Valid
     @Embedded
-    private AddressData address;
+    private Address address;
+
+    public Doctor(DoctorRegistrationData data) {
+        this.id = null;
+        this.firstName = data.firstName();
+        this.lastName = data.lastName();
+        this.email = data.email();
+        this.phone = data.phone();
+        this.document = data.document();
+        this.specialty = data.specialty();
+        this.address = new Address(data.addressData());
+    }
 }

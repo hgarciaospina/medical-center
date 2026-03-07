@@ -35,6 +35,6 @@ public record DoctorRegistrationData(
 
         @NotNull(message = "La dirección es obligatoria")
         @Valid
-        AddressData address             // Address information
+        AddressData addressData        // Address information
 ) {
 }
