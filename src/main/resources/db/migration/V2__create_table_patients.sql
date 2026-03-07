@@ -1,4 +1,4 @@
-CREATE TABLE doctors (
+CREATE TABLE patients (
 
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
 
@@ -12,7 +12,7 @@ CREATE TABLE doctors (
 
     document VARCHAR(10) NOT NULL UNIQUE,
 
-    specialty VARCHAR(50) NOT NULL,
+    birth_date DATE NOT NULL,
 
     state VARCHAR(100) NOT NULL,
 
@@ -26,5 +26,5 @@ CREATE TABLE doctors (
 
 );
 
-CREATE UNIQUE INDEX uk_doctors_email ON doctors(email);
-CREATE UNIQUE INDEX uk_doctors_document ON doctors(document);
+CREATE UNIQUE INDEX uk_patients_email ON patients(email);
+CREATE UNIQUE INDEX uk_patients_document ON patients(document);

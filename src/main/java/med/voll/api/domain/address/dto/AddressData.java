@@ -18,5 +18,4 @@ public record AddressData(
 
         String complement
 
-) {
-}
+) { }

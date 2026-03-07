@@ -1,22 +1,47 @@
 package med.voll.api.controller;
 
 import jakarta.validation.Valid;
+import med.voll.api.domain.address.dto.AddressResponseData;
 import med.voll.api.domain.doctor.Doctor;
 import med.voll.api.domain.doctor.DoctorRepository;
 import med.voll.api.domain.doctor.dto.DoctorRegistrationData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import med.voll.api.domain.doctor.dto.DoctorResponseData;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 public class DoctorController {
-    @Autowired
-    DoctorRepository doctorRepository;
-@PostMapping("/doctors")
-    public void register(@RequestBody  @Valid DoctorRegistrationData data){
-        doctorRepository.save(new Doctor(data));
+
+    private final DoctorRepository doctorRepository;
+
+    // Inyección de dependencias por constructor (profesional)
+    public DoctorController(DoctorRepository doctorRepository) {
+        this.doctorRepository = doctorRepository;
+    }
+
+    @PostMapping("/doctors")
+    public ResponseEntity<DoctorResponseData> register(@RequestBody @Valid DoctorRegistrationData data) {
+        // Crear entidad Doctor desde el DTO
+        Doctor doctor = new Doctor(data);
+
+        // Guardar en la base de datos
+        doctorRepository.save(doctor);
+
+        // Convertir Address a AddressResponseData
+        AddressResponseData addressResponse = new AddressResponseData(doctor.getAddress());
+
+        // Crear DTO de respuesta
+        DoctorResponseData response = new DoctorResponseData(
+                doctor.getId(),
+                doctor.getFirstName(),
+                doctor.getLastName(),
+                doctor.getEmail(),
+                doctor.getPhone(),
+                doctor.getSpecialty(),
+                addressResponse
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

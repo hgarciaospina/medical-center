@@ -2,15 +2,15 @@ package med.voll.api.domain.patient;
 
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import med.voll.api.domain.address.dto.AddressData;
+import med.voll.api.domain.address.Address;
+import med.voll.api.domain.patient.dto.PatientRegistrationData;
+
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "patients")
@@ -47,12 +47,23 @@ public class Patient {
     @Column(nullable = false, unique = true)
     private String document;
 
-    @NotBlank
+    @NotNull
     @Column(nullable = false)
-    private String birthDate;
+    private LocalDate birthDate;
 
     @NotNull
     @Valid
     @Embedded
-    private AddressData address;
+    private Address address;
+
+    // Constructor desde DTO
+    public Patient(PatientRegistrationData data) {
+        this.firstName = data.firstName();
+        this.lastName = data.lastName();
+        this.email = data.email();
+        this.phone = data.phone();
+        this.document = data.document();
+        this.birthDate = data.birthDate();
+        this.address = new Address(data.addressData()); // ✅ Mapea DTO a embebido
+    }
 }

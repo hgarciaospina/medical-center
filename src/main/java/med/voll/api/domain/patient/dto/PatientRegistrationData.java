@@ -1,14 +1,12 @@
 package med.voll.api.domain.patient.dto;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.*;
 import med.voll.api.domain.address.dto.AddressData;
 
-public record PatientRegistrationData(
+import java.time.LocalDate;
 
+public record PatientRegistrationData(
         @NotBlank(message = "El nombre no puede estar vacío")
         String firstName,
 
@@ -33,9 +31,10 @@ public record PatientRegistrationData(
         )
         String document,
 
+        @NotNull(message = "La fecha de nacimiento es obligatoria")
+        LocalDate birthDate,
+
         @NotNull(message = "La dirección es obligatoria")
         @Valid
-        AddressData address
-
-) {
-}
+        AddressData addressData
+) {}
