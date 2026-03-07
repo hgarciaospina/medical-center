@@ -7,8 +7,11 @@ import med.voll.api.domain.patient.PatientRepository;
 import med.voll.api.domain.patient.dto.PatientRegistrationData;
 import med.voll.api.domain.patient.dto.PatientResponseData;
 import med.voll.api.domain.address.dto.AddressResponseData;
+import med.voll.api.domain.patient.dto.PatientSummaryResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -44,5 +47,14 @@ public class PatientController {
         );
 
         return ResponseEntity.ok(response);
+    }
+    @GetMapping("/patients/summary")
+    public ResponseEntity<List<PatientSummaryResponse>> listPatientSummary() {
+        List<PatientSummaryResponse> summaryList = patientRepository.findAll()
+                .stream()
+                .map(PatientSummaryResponse::from)  // <-- mapeo usando el DTO
+                .toList();
+
+        return ResponseEntity.ok(summaryList);
     }
 }
