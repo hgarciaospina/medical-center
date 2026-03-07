@@ -1,5 +1,6 @@
 package med.voll.api.controller;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import med.voll.api.domain.patient.Patient;
 import med.voll.api.domain.patient.PatientRepository;
@@ -18,7 +19,7 @@ public class PatientController {
     public PatientController(PatientRepository patientRepository) {
         this.patientRepository = patientRepository;
     }
-
+    @Transactional
     @PostMapping("/patients")
     public ResponseEntity<PatientResponseData> register(@RequestBody @Valid PatientRegistrationData data) {
         // Crear entidad Patient desde el DTO
