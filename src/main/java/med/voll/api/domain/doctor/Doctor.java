@@ -55,6 +55,10 @@ public class Doctor {
     @Embedded
     private Address address;
 
+    @NotNull
+    @Column(nullable = false)
+    private Boolean active;
+
     // Constructor que mapea DTO a Entity
     public Doctor(DoctorRegistrationData data) {
         this.firstName = data.firstName();
@@ -64,6 +68,7 @@ public class Doctor {
         this.document = data.document();
         this.specialty = data.specialty();
         this.address = new Address(data.addressData()); // ✅ Mapea DTO a embebido
+        this.active = true;
     }
 
     /**
@@ -76,5 +81,9 @@ public class Doctor {
         this.phone = updateData.phone();
         // Delegamos la actualización de la dirección al objeto Address
         this.address.updateAddress(updateData.addressData());
+    }
+
+    public void delete() {
+       this.active = false;
     }
 }

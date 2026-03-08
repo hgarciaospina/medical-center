@@ -69,7 +69,7 @@ public class DoctorController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         // Obtener página de doctores desde el repositorio
-        Page<Doctor> doctorPage = doctorRepository.findAll(pageable);
+        Page<Doctor> doctorPage = doctorRepository.findAllByActiveTrue(pageable);
 
         // Mapear cada Doctor a DTO usando getContent()
         List<DoctorSummaryResponse> summaryList = doctorPage.getContent().stream()
@@ -106,5 +106,19 @@ public class DoctorController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @Transactional
+    @DeleteMapping("/doctors/{id}")
+    public ResponseEntity<Void> deleteDoctor(@PathVariable("id") Long id) {
+
+        Doctor doctor = doctorRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Doctor no encontrado con id: " + id)
+                );
+
+        doctor.delete();
+
+        return ResponseEntity.noContent().build();
     }
 }
