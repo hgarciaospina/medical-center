@@ -8,6 +8,7 @@ import med.voll.api.domain.patient.dto.PatientRegistrationData;
 import med.voll.api.domain.patient.dto.PatientResponseData;
 import med.voll.api.domain.patient.dto.PatientSummaryResponse;
 import med.voll.api.domain.address.dto.AddressResponseData;
+import med.voll.api.domain.patient.dto.PatientUpdateData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
@@ -100,5 +101,38 @@ public class PatientController {
                 .toList();
 
         return ResponseEntity.ok(summaryList);
+    }
+    @PutMapping("/patients")
+    @Transactional
+    public ResponseEntity<PatientResponseData> updatePatient(@RequestBody @Valid PatientUpdateData data) {
+
+        // Buscar paciente por ID
+        Patient patient = patientRepository.findById(data.id())
+                .orElseThrow(() -> new IllegalArgumentException("Paciente no encontrado con ID: " + data.id()));
+
+        // Validar que el email no exista en otro paciente
+        if (patientRepository.existsByEmailAndIdNot(data.email(), data.id())) {
+            throw new IllegalArgumentException("El correo ya está registrado por otro paciente");
+        }
+
+        // Actualizar datos mediante método encapsulado
+        patient.updatePatient(data);
+
+        // Guardar cambios
+        patientRepository.save(patient);
+
+        // Preparar DTO de respuesta
+        PatientResponseData response = new PatientResponseData(
+                patient.getId(),
+                patient.getFirstName(),
+                patient.getLastName(),
+                patient.getEmail(),
+                patient.getPhone(),
+                patient.getDocument(),
+                patient.getBirthDate(),
+                new AddressResponseData(patient.getAddress())
+        );
+
+        return ResponseEntity.ok(response);
     }
 }

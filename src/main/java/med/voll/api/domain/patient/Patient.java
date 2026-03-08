@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import med.voll.api.domain.address.Address;
 import med.voll.api.domain.patient.dto.PatientRegistrationData;
+import med.voll.api.domain.patient.dto.PatientUpdateData;
 
 import java.time.LocalDate;
 
@@ -65,5 +66,17 @@ public class Patient {
         this.document = data.document();
         this.birthDate = data.birthDate();
         this.address = new Address(data.addressData()); // ✅ Mapea DTO a embebido
+    }
+    /**
+     * Método profesional para actualizar un paciente
+     */
+    public void updatePatient(PatientUpdateData data) {
+        this.firstName = data.firstName();
+        this.lastName = data.lastName();
+        this.email = data.email();
+        this.phone = data.phone();
+        this.document = data.document();
+        this.birthDate = data.birthDate();
+        this.address.updateAddress(data.addressData());
     }
 }
