@@ -8,6 +8,10 @@ import med.voll.api.domain.doctor.DoctorRepository;
 import med.voll.api.domain.doctor.dto.DoctorRegistrationData;
 import med.voll.api.domain.doctor.dto.DoctorResponseData;
 import med.voll.api.domain.doctor.dto.DoctorSummaryResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -50,10 +54,25 @@ public class DoctorController {
     }
 
     @GetMapping("/doctors/summary")
-    public ResponseEntity<List<DoctorSummaryResponse>> listDoctorSummary() {
-        List<DoctorSummaryResponse> summaryList = doctorRepository.findAll()
-                .stream()
-                .map(DoctorSummaryResponse::from)  // <-- mapeo usando el DTO
+    public ResponseEntity<List<DoctorSummaryResponse>> listDoctorSummary(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10") int size,
+            @RequestParam(name = "sortBy", defaultValue = "lastName") String sortBy,
+            @RequestParam(name = "sortDir", defaultValue = "asc") String sortDir
+    ) {
+        // Determinar dirección de ordenación
+        Sort sort = sortDir.equalsIgnoreCase("desc")
+                ? Sort.by(sortBy).descending()
+                : Sort.by(sortBy).ascending();
+
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        // Obtener página de doctores desde el repositorio
+        Page<Doctor> doctorPage = doctorRepository.findAll(pageable);
+
+        // Mapear cada Doctor a DTO usando getContent()
+        List<DoctorSummaryResponse> summaryList = doctorPage.getContent().stream()
+                .map(DoctorSummaryResponse::from) // DTO con método estático de mapeo
                 .toList();
 
         return ResponseEntity.ok(summaryList);
