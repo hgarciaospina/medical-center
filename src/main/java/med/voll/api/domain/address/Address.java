@@ -35,4 +35,15 @@ public class Address {
         this.number = dto.number();
         this.complement = dto.complement();
     }
+
+    /**
+     * Actualiza los campos de la dirección usando AddressData
+     */
+    public void updateAddress(AddressData data) {
+        this.state = data.state();
+        this.city = data.city();
+        this.street = data.street();
+        this.number = data.number();
+        this.complement = data.complement();
+    }
 }

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import med.voll.api.domain.address.Address;
 import med.voll.api.domain.doctor.dto.DoctorRegistrationData;
+import med.voll.api.domain.doctor.dto.DoctorUpdateData;
 
 @Entity
 @Table(name = "doctors")
@@ -63,5 +64,17 @@ public class Doctor {
         this.document = data.document();
         this.specialty = data.specialty();
         this.address = new Address(data.addressData()); // ✅ Mapea DTO a embebido
+    }
+
+    /**
+     * Método profesional para actualizar la información del doctor.
+     * @param updateData DTO con los nuevos datos.
+     */
+    public void updateDoctor(DoctorUpdateData updateData) {
+        this.firstName = updateData.firstName();
+        this.lastName = updateData.lastName();
+        this.phone = updateData.phone();
+        // Delegamos la actualización de la dirección al objeto Address
+        this.address.updateAddress(updateData.addressData());
     }
 }

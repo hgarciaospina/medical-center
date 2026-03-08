@@ -8,6 +8,7 @@ import med.voll.api.domain.doctor.DoctorRepository;
 import med.voll.api.domain.doctor.dto.DoctorRegistrationData;
 import med.voll.api.domain.doctor.dto.DoctorResponseData;
 import med.voll.api.domain.doctor.dto.DoctorSummaryResponse;
+import med.voll.api.domain.doctor.dto.DoctorUpdateData;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -76,5 +77,34 @@ public class DoctorController {
                 .toList();
 
         return ResponseEntity.ok(summaryList);
+    }
+    @PutMapping("/doctors")
+    @Transactional
+    public ResponseEntity<DoctorResponseData> updateDoctor(@RequestBody @Valid DoctorUpdateData data) {
+        // Buscar doctor por ID dentro del DTO
+        Doctor doctor = doctorRepository.findById(data.id())
+                .orElseThrow(() -> new IllegalArgumentException("Doctor no encontrado con ID: " + data.id()));
+
+        // Actualizar campos mediante método encapsulado en Doctor
+        doctor.updateDoctor(data);
+
+        // Guardar cambios
+        doctorRepository.save(doctor);
+
+        // Convertir dirección a DTO de respuesta
+        AddressResponseData addressResponse = new AddressResponseData(doctor.getAddress());
+
+        // Preparar DTO de respuesta
+        DoctorResponseData response = new DoctorResponseData(
+                doctor.getId(),
+                doctor.getFirstName(),
+                doctor.getLastName(),
+                doctor.getEmail(),
+                doctor.getPhone(),
+                doctor.getSpecialty(),
+                addressResponse
+        );
+
+        return ResponseEntity.ok(response);
     }
 }
