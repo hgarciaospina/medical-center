@@ -2,6 +2,7 @@ package med.voll.api.controller;
 
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
+import med.voll.api.domain.doctor.Doctor;
 import med.voll.api.domain.patient.Patient;
 import med.voll.api.domain.patient.PatientRepository;
 import med.voll.api.domain.patient.dto.PatientRegistrationData;
@@ -93,7 +94,7 @@ public class PatientController {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         // Obtener página de pacientes
-        Page<Patient> patientPage = patientRepository.findAll(pageable);
+        Page<Patient> patientPage = patientRepository.findAllByActiveTrue(pageable);
 
         // Mapear cada Patient a DTO de resumen
         List<PatientSummaryResponse> summaryList = patientPage.getContent().stream()
@@ -134,5 +135,18 @@ public class PatientController {
         );
 
         return ResponseEntity.ok(response);
+    }
+    @Transactional
+    @DeleteMapping("/patients/{id}")
+    public ResponseEntity<Void> deletePatient(@PathVariable("id") Long id) {
+
+        Patient patient = patientRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Paciente no encontrado con id: " + id)
+                );
+
+        patient.delete();
+
+        return ResponseEntity.noContent().build();
     }
 }

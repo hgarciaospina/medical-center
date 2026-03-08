@@ -57,6 +57,10 @@ public class Patient {
     @Embedded
     private Address address;
 
+    @NotNull
+    @Column(nullable = false)
+    private Boolean active;
+
     // Constructor desde DTO
     public Patient(PatientRegistrationData data) {
         this.firstName = data.firstName();
@@ -66,6 +70,7 @@ public class Patient {
         this.document = data.document();
         this.birthDate = data.birthDate();
         this.address = new Address(data.addressData()); // ✅ Mapea DTO a embebido
+        this.active = true;
     }
     /**
      * Método profesional para actualizar un paciente
@@ -78,5 +83,8 @@ public class Patient {
         this.document = data.document();
         this.birthDate = data.birthDate();
         this.address.updateAddress(data.addressData());
+    }
+    public void delete() {
+        this.active = false;
     }
 }
